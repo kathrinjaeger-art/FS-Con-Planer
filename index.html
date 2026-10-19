@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FSCon Planer (Prototyp)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Nunito+Sans:wght@400;600;700&display=swap">
+<style>
+:root{--bg:#f2f0fa;--sf:#fff;--ink:#1f1b3a;--mute:#5d5a78;--line:#dcd8ee;--adult:#5a49c9;--kids:#0f8f80;--fam:#c23a78;--warn:#9a4b00;--warnbg:#fff1dc;color-scheme:light;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14122a;--sf:#1f1c3b;--ink:#efedff;--mute:#a9a5c9;--line:#353158;--adult:#a99dff;--kids:#3fd0bd;--fam:#ff7db5;--warn:#ffb454;--warnbg:#3a2a10;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#14122a;--sf:#1f1c3b;--ink:#efedff;--mute:#a9a5c9;--line:#353158;--adult:#a99dff;--kids:#3fd0bd;--fam:#ff7db5;--warn:#ffb454;--warnbg:#3a2a10;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 "Nunito Sans",system-ui,sans-serif}
+h1,h2,h3{font-family:"Bricolage Grotesque","Nunito Sans",system-ui,sans-serif;margin:0;line-height:1.15}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--adult);outline-offset:2px}
+header{padding:18px 16px 6px;max-width:720px;margin:0 auto}
+header h1{font-size:1.6rem}
+.note{font-size:.85rem;color:var(--mute);margin:4px 0 0}
+main{max-width:720px;margin:0 auto;padding:8px 16px 96px}
+.seg{display:flex;gap:6px;margin:10px 0}
+.seg button{flex:1;padding:10px 6px;border:2px solid var(--line);border-radius:12px;background:var(--sf);font-weight:700}
+.seg button[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:var(--bg)}
+input[type=search]{width:100%;padding:12px 14px;border:2px solid var(--line);border-radius:12px;background:var(--sf)}
+.filters{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 12px}
+.filters label{font-size:.8rem;color:var(--mute);display:block}
+.filters select{width:100%;padding:9px 8px;border:2px solid var(--line);border-radius:10px;background:var(--sf)}
+.count{font-size:.9rem;color:var(--mute);margin:4px 0 8px}
+.card{display:flex;gap:10px;background:var(--sf);border:1px solid var(--line);border-left:6px solid var(--c);border-radius:12px;padding:12px;margin-bottom:10px;align-items:flex-start}
+.adult{--c:var(--adult)}.kids{--c:var(--kids)}.family{--c:var(--fam)}
+.card .body{flex:1;min-width:0;text-align:left;background:none;border:0;padding:0}
+.card h3{font-size:1.05rem;margin-bottom:3px}
+.when{font-weight:700;font-size:.92rem}
+.meta{font-size:.86rem;color:var(--mute);margin-top:2px}
+.tag{display:inline-block;font-size:.78rem;font-weight:700;color:var(--c);border:1.5px solid var(--c);border-radius:99px;padding:1px 8px;margin:6px 6px 0 0}
+.star{border:0;background:none;font-size:1.7rem;line-height:1;padding:4px 6px;color:var(--mute)}
+.star[aria-pressed="true"]{color:var(--c)}
+.empty{padding:28px 12px;text-align:center;color:var(--mute)}
+.days{display:flex;gap:6px;margin:10px 0}
+.days button{flex:1;padding:10px 4px;border:2px solid var(--line);border-radius:12px;background:var(--sf);font-weight:700}
+.days button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:.85rem;margin:6px 0 12px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--c);margin-right:5px;vertical-align:-1px}
+.slot{display:flex;gap:10px;margin-bottom:10px}
+.slot .t{width:52px;flex:none;text-align:right;font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:1.05rem;padding-top:12px}
+.slot .t small{display:block;font:400 .78rem "Nunito Sans",sans-serif;color:var(--mute)}
+.slot .card{flex:1;margin:0}
+.clash{background:var(--warnbg);color:var(--warn);border-radius:8px;padding:6px 9px;margin-top:8px;font-size:.86rem;font-weight:700}
+.sum{background:var(--warnbg);color:var(--warn);border-radius:10px;padding:10px 12px;margin-bottom:12px;font-weight:700}
+.rm{margin-top:8px;border:1.5px solid var(--line);background:none;border-radius:8px;padding:5px 10px;font-size:.85rem}
+nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--sf);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:5}
+nav button{flex:1;border:0;background:none;padding:12px 4px;font-weight:700;color:var(--mute)}
+nav button[aria-current="page"]{color:var(--ink);box-shadow:inset 0 3px 0 var(--ink)}
+.badge{display:inline-block;min-width:20px;padding:0 6px;border-radius:99px;background:var(--fam);color:#fff;font-size:.78rem;margin-left:4px}
+#ov{position:fixed;inset:0;background:rgba(10,8,30,.55);display:none;align-items:flex-end;justify-content:center;z-index:10}
+#ov.on{display:flex}
+.sheet{background:var(--sf);width:100%;max-width:720px;max-height:88%;overflow:auto;border-radius:20px 20px 0 0;border-top:8px solid var(--c);padding:18px 18px calc(18px + env(safe-area-inset-bottom,0px))}
+.sheet h2{font-size:1.4rem;margin-bottom:8px}
+.sheet dl{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;margin:12px 0}
+.sheet dt{color:var(--mute)}.sheet dd{margin:0;font-weight:700}
+.row{display:flex;gap:8px;margin-top:14px}
+.row button{flex:1;padding:12px;border-radius:12px;border:2px solid var(--ink);font-weight:700;background:var(--sf)}
+.row .main{background:var(--ink);color:var(--bg)}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header>
+  <h1>FSCon Planer</h1>
+  <p class="note">Prototyp mit erfundenen Beispieldaten – kein echtes FSCon-Programm.</p>
+</header>
+<main>
+  <section id="v-prog">
+    <div class="seg" id="seg">
+      <button data-seg="all" aria-pressed="true">Alle</button>
+      <button data-seg="adult" aria-pressed="false">Erwachsene</button>
+      <button data-seg="kids" aria-pressed="false">Kinder &amp; Familien</button>
+    </div>
+    <input type="search" id="q" placeholder="Suchen, z. B. Schwert, Basteln, Halle A" aria-label="Suche">
+    <div class="filters">
+      <div><label for="fday">Tag</label><select id="fday"></select></div>
+      <div><label for="ftime">Uhrzeit</label><select id="ftime"></select></div>
+      <div><label for="fcat">Kategorie</label><select id="fcat"></select></div>
+      <div><label for="fage">Alter des Kindes</label><select id="fage"></select></div>
+    </div>
+    <div class="count" id="count"></div>
+    <div id="list"></div>
+  </section>
+  <section id="v-fav" hidden>
+    <h2>Favoriten</h2>
+    <div class="count" id="favcount"></div>
+    <div id="favlist"></div>
+  </section>
+  <section id="v-plan" hidden>
+    <h2>Mein Zeitplan</h2>
+    <div class="days" id="days"></div>
+    <div class="legend"><span class="adult"><i></i>Erwachsene</span><span class="kids"><i></i>Kinder</span><span class="family"><i></i>Familie</span></div>
+    <div id="plan"></div>
+  </section>
+</main>
+<nav>
+  <button data-view="prog" aria-current="page">Programm</button>
+  <button data-view="fav">Favoriten<span class="badge" id="nb" hidden></span></button>
+  <button data-view="plan">Mein Zeitplan</button>
+</nav>
+<div id="ov" role="dialog" aria-modal="true" aria-label="Programmdetails"><div class="sheet" id="sheet"></div></div>
+
+<script>
+/* DATEN: Hier später echte Programmpunkte eintragen.
+   Reihenfolge: Titel, Beschreibung, Tag, Start, Ende, Ort, Kategorie, Zielgruppe, Alter von, Alter bis */
+var DAYS={fr:"Fr 9.4.",sa:"Sa 10.4.",so:"So 11.4."};
+var AUD={adult:"Erwachsene",kids:"Kinder",family:"Familie"};
+var RAW=[
+["Schwertkampf-Grundlagen","Erste Schritte mit Polsterwaffen: Haltung, Schläge, Fairness. Ausrüstung wird gestellt.","fr","10:00","11:30","Halle A","Workshop","adult"],
+["Worldbuilding: Eine Welt aus dem Nichts","Wie baut man Karten, Kulturen und Magiesysteme, die glaubwürdig wirken?","fr","14:00","15:00","Saal Nova","Vortrag","adult"],
+["Kostümnähen für Anfänger","Mit Schnittmuster, Stoffresten und Nähmaschine zum ersten Cosplay-Teil.","fr","15:00","17:00","Werkstatt","Kreativ","adult"],
+["Lesung: Neue Fantasy-Stimmen","Drei erfundene Autorinnen und Autoren lesen aus ihren Debüts.","fr","19:00","20:30","Saal Nova","Vortrag","adult"],
+["Rollenspiel-Runde: Die Taverne","Gemeinsames Abenteuer für Neulinge und Profis, Charaktere liegen bereit.","sa","10:00","12:30","Taverne","Gemeinsam","adult"],
+["Cosplay-Make-up und Masken","Narben, Schuppen, Elfenohren: Techniken für Gesicht und Maske.","sa","11:00","12:30","Werkstatt","Kreativ","adult"],
+["Panel: Science-Fiction und Zukunft","Diskussion darüber, welche Zukunftsbilder uns heute prägen.","sa","14:00","15:30","Saal Nova","Vortrag","adult"],
+["Brettspiel-Nachmittag","Offene Spielrunden mit Erklärbären, vom Kartenspiel bis zum Epos.","sa","15:00","18:00","Spielhalle","Gemeinsam","adult"],
+["Feuer- und Flowarts-Schnupperkurs","Poi, Stäbe und Jonglage mit ungefährlichen Übungsgeräten.","sa","16:00","17:30","Halle A","Workshop","adult"],
+["Kostümwettbewerb und Abschlussabend","Bühne frei für die schönsten Kostüme, danach Musik und Gespräche.","sa","20:00","22:30","Saal Nova","Gemeinsam","adult"],
+["Gemeinsamer Brunch","Zum Ausklang: Frühstücksbuffet und Zeit zum Verabschieden.","so","10:00","11:30","Café Lumen","Weiteres","adult"],
+["Drachen basteln","Aus Papier, Stoff und Glitzer entsteht dein eigener Drache.","fr","15:00","16:30","Werkstatt","Kreativ","kids",6,10],
+["Schatzsuche im Gelände","Rätsel lösen, Hinweise finden, Schatz heben. Eltern dürfen mitraten.","fr","16:00","17:30","Außengelände","Spiel","family",5,12],
+["Märchenstunde","Kuschelige Geschichten von Feen, Riesen und mutigen Mäusen.","sa","10:30","11:15","Leseecke","Kinderangebot","kids",4,8],
+["Schwimmen im Hotelbad","Planschen und Rutschen unter Aufsicht der Eltern.","sa","14:00","16:00","Hotelbad","Freizeit","family",4,14],
+["Zauberschule: Erste Tricks","Kleine Zaubertricks lernen und der Familie vorführen.","sa","15:00","16:00","Zauberzelt","Kinderangebot","kids",7,12],
+["Kinder-Rollenspiel: Die kleinen Helden","Ein einfaches Abenteuer mit Würfeln und viel Fantasie.","sa","16:00","17:30","Taverne","Spiel","kids",8,12],
+["Familien-Kostümparade","Alle verkleiden sich, vom Mini-Ritter bis zur Oma-Hexe.","sa","18:00","19:00","Foyer","Familie","family",0,99],
+["Familien-Spieleturnier","Teams aus Groß und Klein spielen um den goldenen Würfel.","so","10:30","12:00","Spielhalle","Familie","family",6,99],
+["Waldspaziergang und Picknick","Gemeinsamer Spaziergang mit Picknickdecke und Naturrätseln.","so","13:00","15:00","Außengelände","Freizeit","family",0,99]
+];
+var EV=RAW.map(function(r,i){return{id:i,title:r[0],desc:r[1],day:r[2],s:r[3],e:r[4],place:r[5],cat:r[6],aud:r[7],amin:r[8]==null?null:r[8],amax:r[9]==null?null:r[9]}});
+function mins(t){var p=t.split(":");return +p[0]*60+ +p[1]}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function ageTxt(e){if(e.amin==null)return"";if(e.amin===0&&e.amax===99)return"alle Altersgruppen";return"ab "+e.amin+" J."+(e.amax<99?", bis "+e.amax+" J.":"")}
+
+/* FAVORITEN (werden im Browser gespeichert, falls möglich) */
+var favs=[];
+try{favs=JSON.parse(localStorage.getItem("fscon-favs")||"[]")}catch(x){favs=[]}
+function saveFavs(){try{localStorage.setItem("fscon-favs",JSON.stringify(favs))}catch(x){}}
+function isFav(id){return favs.indexOf(id)>-1}
+function toggle(id){var i=favs.indexOf(id);if(i>-1)favs.splice(i,1);else favs.push(id);saveFavs();renderAll()}
+
+var st={seg:"all",day:"all",time:"all",cat:"all",age:"all",q:"",plan:"fr",open:null,view:"prog"};
+
+function opt(sel,list){document.getElementById(sel).innerHTML=list.map(function(o){return'<option value="'+o[0]+'">'+o[1]+"</option>"}).join("")}
+opt("fday",[["all","Alle Tage"],["fr",DAYS.fr],["sa",DAYS.sa],["so",DAYS.so]]);
+opt("ftime",[["all","Ganztägig"],["am","Vormittag (bis 12)"],["pm","Nachmittag (12–18)"],["ev","Abend (ab 18)"]]);
+var cats=[];EV.forEach(function(e){if(cats.indexOf(e.cat)<0)cats.push(e.cat)});cats.sort();
+opt("fcat",[["all","Alle Kategorien"]].concat(cats.map(function(c){return[c,c]})));
+var ages=[["all","Egal"]];for(var a=3;a<=14;a++)ages.push([a,a+" Jahre"]);opt("fage",ages);
+
+function pass(e){
+  if(st.seg==="adult"&&e.aud!=="adult")return false;
+  if(st.seg==="kids"&&e.aud==="adult")return false;
+  if(st.day!=="all"&&e.day!==st.day)return false;
+  if(st.cat!=="all"&&e.cat!==st.cat)return false;
+  var m=mins(e.s);
+  if(st.time==="am"&&m>=720)return false;
+  if(st.time==="pm"&&(m<720||m>=1080))return false;
+  if(st.time==="ev"&&m<1080)return false;
+  if(st.age!=="all"){if(e.aud==="adult")return false;if(+st.age<e.amin||+st.age>e.amax)return false}
+  if(st.q){var h=(e.title+" "+e.desc+" "+e.place+" "+e.cat).toLowerCase();if(h.indexOf(st.q.toLowerCase())<0)return false}
+  return true;
+}
+function byTime(a,b){var d=Object.keys(DAYS).indexOf(a.day)-Object.keys(DAYS).indexOf(b.day);return d||mins(a.s)-mins(b.s)}
+function clashes(e){return EV.filter(function(o){return o.id!==e.id&&isFav(o.id)&&o.day===e.day&&mins(o.s)<mins(e.e)&&mins(e.s)<mins(o.e)})}
+
+function card(e,extra){
+  var f=isFav(e.id),age=ageTxt(e);
+  return'<article class="card '+e.aud+'"><button class="body" data-open="'+e.id+'"><div class="when">'+DAYS[e.day]+", "+e.s+"–"+e.e+" Uhr</div><h3>"+esc(e.title)+'</h3><div class="meta">'+esc(e.place)+'</div><span class="tag">'+AUD[e.aud]+'</span><span class="tag">'+esc(e.cat)+"</span>"+(age?'<span class="tag">'+age+"</span>":"")+"</button>"
+  +'<button class="star" data-fav="'+e.id+'" aria-pressed="'+f+'" aria-label="'+(f?"Aus Favoriten entfernen: ":"Als Favorit speichern: ")+esc(e.title)+'">'+(f?"★":"☆")+"</button></article>";
+}
+function renderList(){
+  var l=EV.filter(pass).sort(byTime);
+  document.getElementById("count").textContent=l.length+" Programmpunkte";
+  document.getElementById("list").innerHTML=l.length?l.map(card).join(""):'<div class="empty">Nichts gefunden. Lockere einen Filter oder ändere den Suchbegriff.</div>';
+}
+function renderFav(){
+  var l=EV.filter(function(e){return isFav(e.id)}).sort(byTime);
+  document.getElementById("favcount").textContent=l.length?l.length+" gespeichert":"";
+  document.getElementById("favlist").innerHTML=l.length?l.map(card).join(""):'<div class="empty">Noch keine Favoriten. Tippe im Programm auf den Stern.</div>';
+}
+function renderPlan(){
+  var keys=Object.keys(DAYS);
+  document.getElementById("days").innerHTML=keys.map(function(k){var n=EV.filter(function(e){return e.day===k&&isFav(e.id)}).length;return'<button data-pday="'+k+'" aria-pressed="'+(st.plan===k)+'">'+DAYS[k]+(n?" ("+n+")":"")+"</button>"}).join("");
+  var l=EV.filter(function(e){return e.day===st.plan&&isFav(e.id)}).sort(byTime);
+  if(!l.length){document.getElementById("plan").innerHTML='<div class="empty">An diesem Tag ist noch nichts geplant. Wähle im Programm Favoriten aus.</div>';return}
+  var n=l.filter(function(e){return clashes(e).length}).length;
+  var h=n?'<div class="sum">'+n+" Programmpunkte überschneiden sich an diesem Tag.</div>":"";
+  h+=l.map(function(e){
+    var c=clashes(e),k=c.length?'<div class="clash">Überschneidung mit: '+c.map(function(o){return esc(o.title)}).join(", ")+"</div>":"";
+    return'<div class="slot"><div class="t">'+e.s+"<small>bis "+e.e+'</small></div><article class="card '+e.aud+'"><div class="body"><h3>'+esc(e.title)+'</h3><div class="meta">'+esc(e.place)+'</div><span class="tag">'+AUD[e.aud]+"</span>"+k+'<button class="rm" data-fav="'+e.id+'">Favorit entfernen</button></div></article></div>';
+  }).join("");
+  document.getElementById("plan").innerHTML=h;
+}
+function renderSheet(){
+  var ov=document.getElementById("ov");
+  if(st.open==null){ov.classList.remove("on");return}
+  var e=EV[st.open],f=isFav(e.id),age=ageTxt(e);
+  document.getElementById("sheet").className="sheet "+e.aud;
+  document.getElementById("sheet").innerHTML="<h2>"+esc(e.title)+"</h2><p>"+esc(e.desc)+"</p><dl><dt>Tag</dt><dd>"+DAYS[e.day]+"</dd><dt>Zeit</dt><dd>"+e.s+"–"+e.e+" Uhr</dd><dt>Ort</dt><dd>"+esc(e.place)+"</dd><dt>Kategorie</dt><dd>"+esc(e.cat)+"</dd><dt>Für</dt><dd>"+AUD[e.aud]+"</dd>"+(age?"<dt>Alter</dt><dd>"+age+"</dd>":"")+'</dl><div class="row"><button data-close="1">Schließen</button><button class="main" data-fav="'+e.id+'">'+(f?"Favorit entfernen":"Als Favorit speichern")+"</button></div>";
+  ov.classList.add("on");
+}
+function renderNav(){
+  var b=document.getElementById("nb");b.hidden=!favs.length;b.textContent=favs.length;
+  document.querySelectorAll("nav button").forEach(function(x){if(x.dataset.view===st.view)x.setAttribute("aria-current","page");else x.removeAttribute("aria-current")});
+  ["prog","fav","plan"].forEach(function(v){document.getElementById("v-"+v).hidden=v!==st.view});
+}
+function renderAll(){renderList();renderFav();renderPlan();renderSheet();renderNav()}
+
+document.addEventListener("click",function(ev){
+  var t=ev.target.closest("button,#ov");if(!t)return;
+  if(t.dataset.fav!=null){toggle(+t.dataset.fav);return}
+  if(t.dataset.open!=null){st.open=+t.dataset.open;renderSheet();return}
+  if(t.dataset.close||t.id==="ov"){st.open=null;renderSheet();return}
+  if(t.dataset.view){st.view=t.dataset.view;renderNav();window.scrollTo(0,0);return}
+  if(t.dataset.pday){st.plan=t.dataset.pday;renderPlan();return}
+  if(t.dataset.seg){st.seg=t.dataset.seg;document.querySelectorAll("#seg button").forEach(function(b){b.setAttribute("aria-pressed",b===t)});renderList()}
+});
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&st.open!=null){st.open=null;renderSheet()}});
+document.getElementById("q").addEventListener("input",function(e){st.q=e.target.value.trim();renderList()});
+[["fday","day"],["ftime","time"],["fcat","cat"],["fage","age"]].forEach(function(p){document.getElementById(p[0]).addEventListener("change",function(e){st[p[1]]=e.target.value;renderList()})});
+renderAll();
+</script>
+</body>
+</html>
