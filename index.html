@@ -70,7 +70,7 @@ nav button[aria-current="page"]{color:var(--ink);box-shadow:inset 0 3px 0 var(--
 <body>
 <header>
   <h1>FSCon Planer</h1>
-  <p class="note">Prototyp mit erfundenen Beispieldaten – kein echtes FSCon-Programm.</p>
+  <p class="note">Prototyp mit dem Workshop-Plan 2025 als Beispiel. Orte teils noch offen.</p>
 </header>
 <main>
   <section id="v-prog">
@@ -79,12 +79,12 @@ nav button[aria-current="page"]{color:var(--ink);box-shadow:inset 0 3px 0 var(--
       <button data-seg="adult" aria-pressed="false">Erwachsene</button>
       <button data-seg="kids" aria-pressed="false">Kinder &amp; Familien</button>
     </div>
-    <input type="search" id="q" placeholder="Suchen, z. B. Schwert, Basteln, Halle A" aria-label="Suche">
+    <input type="search" id="q" placeholder="Suchen, z. B. Poi, Staff, Hoop" aria-label="Suche">
     <div class="filters">
       <div><label for="fday">Tag</label><select id="fday"></select></div>
       <div><label for="ftime">Uhrzeit</label><select id="ftime"></select></div>
       <div><label for="fcat">Kategorie</label><select id="fcat"></select></div>
-      <div><label for="fage">Alter des Kindes</label><select id="fage"></select></div>
+      <div hidden><label for="fage">Alter des Kindes</label><select id="fage"></select></div>
     </div>
     <div class="count" id="count"></div>
     <div id="list"></div>
@@ -111,29 +111,63 @@ nav button[aria-current="page"]{color:var(--ink);box-shadow:inset 0 3px 0 var(--
 <script>
 /* DATEN: Hier später echte Programmpunkte eintragen.
    Reihenfolge: Titel, Beschreibung, Tag, Start, Ende, Ort, Kategorie, Zielgruppe, Alter von, Alter bis */
-var DAYS={fr:"Fr 9.4.",sa:"Sa 10.4.",so:"So 11.4."};
+var DAYS={fr:"Freitag",sa:"Samstag",so:"Sonntag"};
 var AUD={adult:"Erwachsene",kids:"Kinder",family:"Familie"};
 var RAW=[
-["Schwertkampf-Grundlagen","Erste Schritte mit Polsterwaffen: Haltung, Schläge, Fairness. Ausrüstung wird gestellt.","fr","10:00","11:30","Halle A","Workshop","adult"],
-["Worldbuilding: Eine Welt aus dem Nichts","Wie baut man Karten, Kulturen und Magiesysteme, die glaubwürdig wirken?","fr","14:00","15:00","Saal Nova","Vortrag","adult"],
-["Kostümnähen für Anfänger","Mit Schnittmuster, Stoffresten und Nähmaschine zum ersten Cosplay-Teil.","fr","15:00","17:00","Werkstatt","Kreativ","adult"],
-["Lesung: Neue Fantasy-Stimmen","Drei erfundene Autorinnen und Autoren lesen aus ihren Debüts.","fr","19:00","20:30","Saal Nova","Vortrag","adult"],
-["Rollenspiel-Runde: Die Taverne","Gemeinsames Abenteuer für Neulinge und Profis, Charaktere liegen bereit.","sa","10:00","12:30","Taverne","Gemeinsam","adult"],
-["Cosplay-Make-up und Masken","Narben, Schuppen, Elfenohren: Techniken für Gesicht und Maske.","sa","11:00","12:30","Werkstatt","Kreativ","adult"],
-["Panel: Science-Fiction und Zukunft","Diskussion darüber, welche Zukunftsbilder uns heute prägen.","sa","14:00","15:30","Saal Nova","Vortrag","adult"],
-["Brettspiel-Nachmittag","Offene Spielrunden mit Erklärbären, vom Kartenspiel bis zum Epos.","sa","15:00","18:00","Spielhalle","Gemeinsam","adult"],
-["Feuer- und Flowarts-Schnupperkurs","Poi, Stäbe und Jonglage mit ungefährlichen Übungsgeräten.","sa","16:00","17:30","Halle A","Workshop","adult"],
-["Kostümwettbewerb und Abschlussabend","Bühne frei für die schönsten Kostüme, danach Musik und Gespräche.","sa","20:00","22:30","Saal Nova","Gemeinsam","adult"],
-["Gemeinsamer Brunch","Zum Ausklang: Frühstücksbuffet und Zeit zum Verabschieden.","so","10:00","11:30","Café Lumen","Weiteres","adult"],
-["Drachen basteln","Aus Papier, Stoff und Glitzer entsteht dein eigener Drache.","fr","15:00","16:30","Werkstatt","Kreativ","kids",6,10],
-["Schatzsuche im Gelände","Rätsel lösen, Hinweise finden, Schatz heben. Eltern dürfen mitraten.","fr","16:00","17:30","Außengelände","Spiel","family",5,12],
-["Märchenstunde","Kuschelige Geschichten von Feen, Riesen und mutigen Mäusen.","sa","10:30","11:15","Leseecke","Kinderangebot","kids",4,8],
-["Schwimmen im Hotelbad","Planschen und Rutschen unter Aufsicht der Eltern.","sa","14:00","16:00","Hotelbad","Freizeit","family",4,14],
-["Zauberschule: Erste Tricks","Kleine Zaubertricks lernen und der Familie vorführen.","sa","15:00","16:00","Zauberzelt","Kinderangebot","kids",7,12],
-["Kinder-Rollenspiel: Die kleinen Helden","Ein einfaches Abenteuer mit Würfeln und viel Fantasie.","sa","16:00","17:30","Taverne","Spiel","kids",8,12],
-["Familien-Kostümparade","Alle verkleiden sich, vom Mini-Ritter bis zur Oma-Hexe.","sa","18:00","19:00","Foyer","Familie","family",0,99],
-["Familien-Spieleturnier","Teams aus Groß und Klein spielen um den goldenen Würfel.","so","10:30","12:00","Spielhalle","Familie","family",6,99],
-["Waldspaziergang und Picknick","Gemeinsamer Spaziergang mit Picknickdecke und Naturrätseln.","so","13:00","15:00","Außengelände","Freizeit","family",0,99]
+["Hoop Tricksharing", "Offene Runde: Tricks zeigen und gemeinsam lernen.", "fr", "16:00", "17:00", "", "Hoop", "adult"],
+["Poi Switchbacks", "Leitung: Stefan Hohenberger.", "fr", "16:00", "17:00", "", "Poi", "adult"],
+["Fire Safety: Ist das nicht gefährlich? – Ja, aber!", "Leitung: Kai Siegenthaler.", "fr", "16:00", "17:00", "", "Feuer & Sicherheit", "adult"],
+["Firespace Beginner", "Leitung: Melissa.", "fr", "17:00", "18:00", "Firespace", "Feuer & Sicherheit", "adult"],
+["Stab Beginner", "Leitung: Ifrit Flammenzunge.", "fr", "17:00", "18:00", "", "Staff", "adult"],
+["Ropedart für Anfänger (Aufbaukurs zum letzten Jahr)", "Leitung: Leonie Sigl.", "fr", "17:00", "18:00", "", "Ropedart", "adult"],
+["Tanz mit Poi oder anderen Tools", "Leitung: Weudl.", "fr", "17:00", "18:00", "", "Tanz & Bewegung", "adult"],
+["Imagination – der sichere Ort", "Leitung: PoiLino.", "fr", "17:00", "17:20", "", "Tanz & Bewegung", "adult"],
+["Einweisung Firespace", "Offene Runde: Tricks zeigen und gemeinsam lernen.", "fr", "18:00", "18:30", "Firespace", "Feuer & Sicherheit", "adult"],
+["Eröffnung und Gruppenfoto", "Offene Runde: Tricks zeigen und gemeinsam lernen.", "fr", "20:00", "20:30", "Sportplatz", "Weiteres", "adult"],
+["Dancing Torches", "Leitung: Anika Urbanke-Baar.", "sa", "10:00", "11:00", "", "Feuer & Sicherheit", "adult"],
+["Contact Staff Intro", "Leitung: Tom Plöger.", "sa", "10:00", "11:30", "", "Staff", "adult"],
+["Bodymovement mit dem Ropedart – Verfeinere deinen Flow", "Leitung: Leonie Sigl.", "sa", "10:00", "10:45", "", "Ropedart", "adult"],
+["Buugeng", "Leitung: Andreas Lindemann.", "sa", "10:00", "11:00", "", "Buugeng", "adult"],
+["Jonglage für Anfänger", "Leitung: Sandro Bretag.", "sa", "10:00", "11:00", "", "Jonglage", "adult"],
+["Pilates mit Stretch (Stretchilates)", "Leitung: René Schlicht.", "sa", "10:00", "11:00", "", "Tanz & Bewegung", "adult"],
+["LED-Programmierung Teil I (Theorie)", "Leitung: PoiLino.", "sa", "10:00", "11:30", "", "LED & Technik", "adult"],
+["The Box – 4 Hula Hoops", "Leitung: Isa Hirschauer.", "sa", "11:00", "12:00", "", "Hoop", "adult"],
+["Neurotango", "Leitung: Tina Preissler.", "sa", "11:00", "12:00", "", "Tanz & Bewegung", "adult"],
+["Awareness", "Leitung: Elena Tinkloh.", "sa", "11:00", "12:00", "", "Weiteres", "adult"],
+["Dragon Staff Arm Rolls", "Leitung: Stefan Elischer.", "sa", "11:30", "13:00", "", "Staff", "adult"],
+["Nicht Übung macht den Meister, sondern perfektes Training", "Leitung: Kai Siegenthaler.", "sa", "11:30", "13:00", "", "Weiteres", "adult"],
+["Levi Tricksharing", "Offene Runde: Tricks zeigen und gemeinsam lernen.", "sa", "12:00", "13:00", "", "Weiteres", "adult"],
+["Tanzen mit Toys für (sonst eher) nicht Tanzende", "Leitung: Aileen Hill.", "sa", "12:00", "13:00", "", "Tanz & Bewegung", "adult"],
+["Buugeng Tricksharing", "Offene Runde: Tricks zeigen und gemeinsam lernen.", "sa", "12:00", "13:00", "", "Buugeng", "adult"],
+["3&4 Poi auf Superman-Basis", "Leitung: Stefan Steinsdorfer.", "sa", "13:00", "14:00", "", "Poi", "adult"],
+["Ropedart Tricksharing", "Offene Runde: Tricks zeigen und gemeinsam lernen.", "sa", "13:00", "14:00", "", "Ropedart", "adult"],
+["Fit mit Hula Hoop", "Leitung: Gabby Feuerfünkchen.", "sa", "13:00", "14:00", "", "Hoop", "adult"],
+["Vom Handstand zum Rad", "Leitung: Rigo Müller und Sahra Weber.", "sa", "13:00", "14:00", "", "Akrobatik", "adult"],
+["Fächer Tricksharing", "Leitung: Julia Linker.", "sa", "13:00", "14:00", "", "Weiteres", "adult"],
+["Klamotten für Feuerspieler", "Leitung: Anika Urbanke-Baar.", "sa", "13:00", "14:30", "", "Feuer & Sicherheit", "adult"],
+["Körperfeuer und Feuerschlucken", "Leitung: Franziska Dally.", "sa", "14:00", "15:00", "", "Feuer & Sicherheit", "adult"],
+["Ropedart – Welcome The Overlord", "Leitung: André Busch.", "sa", "14:00", "15:30", "", "Ropedart", "adult"],
+["LED-Programmierung Teil II (Praxis)", "Leitung: PoiLino.", "sa", "14:00", "15:30", "", "LED & Technik", "adult"],
+["Multihoops Basics", "Leitung: Leonie Sigl.", "sa", "14:00", "15:00", "", "Hoop", "adult"],
+["Partnerpoi", "Leitung: Uli Wertheimer-Heckmann und Harry Brunner.", "sa", "14:00", "15:30", "", "Poi", "adult"],
+["Klare Vorgaben – erfolgreich mit Veranstaltern arbeiten", "Leitung: Joschi Mau.", "sa", "14:00", "15:00", "", "Business", "adult"],
+["Doublestaff Tricksharing", "Leitung: Andreas Lindemann.", "sa", "15:00", "16:00", "", "Staff", "adult"],
+["Akrobatik", "Leitung: Tom Plöger.", "sa", "15:00", "16:30", "", "Akrobatik", "adult"],
+["Poi: butterfly, 3-beat-weave und dann?", "Leitung: Bianca Hoffmann und Mirko Pollok.", "sa", "16:00", "17:30", "", "Poi", "adult"],
+["Ropedart horizontal moves", "Leitung: Nathaniel Dieterich.", "sa", "16:00", "17:00", "", "Ropedart", "adult"],
+["Quadgeng", "Leitung: Leonie Sigl.", "sa", "16:00", "17:00", "", "Buugeng", "adult"],
+["Tanz – Präsenz – Ausdruck", "Leitung: René Schlicht.", "sa", "16:00", "17:30", "", "Tanz & Bewegung", "adult"],
+["Salestheorie für Feuerkünstler", "Leitung: Passi.", "sa", "16:00", "17:00", "", "Business", "adult"],
+["Dragonstaff Tricksharing", "Offene Runde: Tricks zeigen und gemeinsam lernen.", "sa", "17:00", "18:00", "", "Staff", "adult"],
+["Einweisung Firespace", "Offene Runde: Tricks zeigen und gemeinsam lernen.", "sa", "18:00", "18:30", "Firespace", "Feuer & Sicherheit", "adult"],
+["Staff Tricksharing", "Offene Runde: Tricks zeigen und gemeinsam lernen.", "sa", "18:30", "19:30", "", "Staff", "adult"],
+["Make-up für Feuerspielende", "Leitung: Anika Urbanke-Baar.", "sa", "18:30", "20:00", "", "Weiteres", "adult"],
+["Spinner-Show", "Offene Runde: Tricks zeigen und gemeinsam lernen.", "sa", "20:30", "22:00", "", "Show", "adult"],
+["Poi Tricksharing (entfällt bei Regen)", "Offene Runde: Tricks zeigen und gemeinsam lernen.", "so", "10:00", "11:00", "", "Poi", "adult"],
+["Contact Staff: Pendulum Principles & Elbow Fishtails", "Leitung: Alena Varchmin.", "so", "10:00", "11:00", "", "Staff", "adult"],
+["Hoop Up Your Power – Morning Fit&Fun", "Leitung: Isa Hirschauer.", "so", "10:00", "10:45", "", "Hoop", "adult"],
+["3-Ball-Jonglage für Anfänger", "Leitung: Martina Mader.", "so", "10:00", "10:30", "", "Jonglage", "adult"],
+["Kartenwerfen", "Leitung: Tom Plöger.", "so", "10:00", "10:15", "", "Weiteres", "adult"]
 ];
 var EV=RAW.map(function(r,i){return{id:i,title:r[0],desc:r[1],day:r[2],s:r[3],e:r[4],place:r[5],cat:r[6],aud:r[7],amin:r[8]==null?null:r[8],amax:r[9]==null?null:r[9]}});
 function mins(t){var p=t.split(":");return +p[0]*60+ +p[1]}
@@ -174,7 +208,7 @@ function clashes(e){return EV.filter(function(o){return o.id!==e.id&&isFav(o.id)
 
 function card(e,extra){
   var f=isFav(e.id),age=ageTxt(e);
-  return'<article class="card '+e.aud+'"><button class="body" data-open="'+e.id+'"><div class="when">'+DAYS[e.day]+", "+e.s+"–"+e.e+" Uhr</div><h3>"+esc(e.title)+'</h3><div class="meta">'+esc(e.place)+'</div><span class="tag">'+AUD[e.aud]+'</span><span class="tag">'+esc(e.cat)+"</span>"+(age?'<span class="tag">'+age+"</span>":"")+"</button>"
+  return'<article class="card '+e.aud+'"><button class="body" data-open="'+e.id+'"><div class="when">'+DAYS[e.day]+", "+e.s+"–"+e.e+" Uhr</div><h3>"+esc(e.title)+'</h3><div class="meta">'+esc(e.place||"Ort folgt")+'</div><span class="tag">'+AUD[e.aud]+'</span><span class="tag">'+esc(e.cat)+"</span>"+(age?'<span class="tag">'+age+"</span>":"")+"</button>"
   +'<button class="star" data-fav="'+e.id+'" aria-pressed="'+f+'" aria-label="'+(f?"Aus Favoriten entfernen: ":"Als Favorit speichern: ")+esc(e.title)+'">'+(f?"★":"☆")+"</button></article>";
 }
 function renderList(){
@@ -196,7 +230,7 @@ function renderPlan(){
   var h=n?'<div class="sum">'+n+" Programmpunkte überschneiden sich an diesem Tag.</div>":"";
   h+=l.map(function(e){
     var c=clashes(e),k=c.length?'<div class="clash">Überschneidung mit: '+c.map(function(o){return esc(o.title)}).join(", ")+"</div>":"";
-    return'<div class="slot"><div class="t">'+e.s+"<small>bis "+e.e+'</small></div><article class="card '+e.aud+'"><div class="body"><h3>'+esc(e.title)+'</h3><div class="meta">'+esc(e.place)+'</div><span class="tag">'+AUD[e.aud]+"</span>"+k+'<button class="rm" data-fav="'+e.id+'">Favorit entfernen</button></div></article></div>';
+    return'<div class="slot"><div class="t">'+e.s+"<small>bis "+e.e+'</small></div><article class="card '+e.aud+'"><div class="body"><h3>'+esc(e.title)+'</h3><div class="meta">'+esc(e.place||"Ort folgt")+'</div><span class="tag">'+AUD[e.aud]+"</span>"+k+'<button class="rm" data-fav="'+e.id+'">Favorit entfernen</button></div></article></div>';
   }).join("");
   document.getElementById("plan").innerHTML=h;
 }
@@ -205,7 +239,7 @@ function renderSheet(){
   if(st.open==null){ov.classList.remove("on");return}
   var e=EV[st.open],f=isFav(e.id),age=ageTxt(e);
   document.getElementById("sheet").className="sheet "+e.aud;
-  document.getElementById("sheet").innerHTML="<h2>"+esc(e.title)+"</h2><p>"+esc(e.desc)+"</p><dl><dt>Tag</dt><dd>"+DAYS[e.day]+"</dd><dt>Zeit</dt><dd>"+e.s+"–"+e.e+" Uhr</dd><dt>Ort</dt><dd>"+esc(e.place)+"</dd><dt>Kategorie</dt><dd>"+esc(e.cat)+"</dd><dt>Für</dt><dd>"+AUD[e.aud]+"</dd>"+(age?"<dt>Alter</dt><dd>"+age+"</dd>":"")+'</dl><div class="row"><button data-close="1">Schließen</button><button class="main" data-fav="'+e.id+'">'+(f?"Favorit entfernen":"Als Favorit speichern")+"</button></div>";
+  document.getElementById("sheet").innerHTML="<h2>"+esc(e.title)+"</h2><p>"+esc(e.desc)+"</p><dl><dt>Tag</dt><dd>"+DAYS[e.day]+"</dd><dt>Zeit</dt><dd>"+e.s+"–"+e.e+" Uhr</dd><dt>Ort</dt><dd>"+esc(e.place||"Ort folgt")+"</dd><dt>Kategorie</dt><dd>"+esc(e.cat)+"</dd><dt>Für</dt><dd>"+AUD[e.aud]+"</dd>"+(age?"<dt>Alter</dt><dd>"+age+"</dd>":"")+'</dl><div class="row"><button data-close="1">Schließen</button><button class="main" data-fav="'+e.id+'">'+(f?"Favorit entfernen":"Als Favorit speichern")+"</button></div>";
   ov.classList.add("on");
 }
 function renderNav(){
